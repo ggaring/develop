@@ -1,6 +1,0 @@
-# owner: glen
-
-# this role is to call bash script and use functions inside
----
-- name: Call bash script
- 

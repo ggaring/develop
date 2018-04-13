@@ -1,0 +1,20 @@
+# owner: glen
+# description: playbook to trigger acunetix scan in jenkins
+---
+- name: Load variable from core-configuration
+  include_vars: ../../roles/core-configuration/vars/msorange/{{ item }}.yml
+  with_items:
+     - jenkins #includes username and password
+     - vault
+
+- name: Queue build of a project in Jenkins
+  become: no
+  run_once: yes
+  delegate_to: localhost
+  uri:
+    url: "http://{{ jenkins_host }}/job/IS_STGN00_{{ project }}_WebScan/build?token={{ jenkins_token }}"
+    method: GET
+    user: "{{ jenkins_user }}" #variable created to access Jenkins
+    password: "{{ jenkins_password }}" #variable created to access Jenkins
+    force_basic_auth: yes
+    status_code: 201 
