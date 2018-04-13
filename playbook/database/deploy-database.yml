@@ -1,0 +1,131 @@
+#owner: glen
+# description: Playbook to backup database, copy database to internal/frontfacing and drop old databases based on the arguments passed
+---
+- hosts: webservers
+  gather_facts: yes
+
+  tasks:
+    - name: Finding backup host
+      include_tasks: ../../roles/cms/tasks/get_backup_host.yml
+
+    - name: Creating a Directory for backup
+      include_tasks: ../../roles/cms/tasks/create_backup_path.yml
+      when: task_type == 'backup_db' or task_type == 'copy_db'
+
+    - name: Get source database name from Inventory Database
+      include_tasks: ../../roles/cms/tasks/get_src_database_name.yml
+
+    - name: Get destination database name from Inventory Database
+      include_tasks: ../../roles/cms/tasks/get_dest_database_name.yml
+
+    - name: Get old source database name from Inventory Database
+      include_tasks: ../../roles/cms/tasks/get_src_old_database_name.yml
+      when: task_type == 'rollback_db'
+
+    - name: Get old destination database name from Inventory Database
+      include_tasks: ../../roles/cms/tasks/get_dest_old_database_name.yml
+
+    - name: Taking database backup
+      include_tasks: ../../roles/cms/tasks/backup_database.yml
+      when: task_type == 'backup_db' or task_type == 'copy_db'
+
+    - name: Preparing new database name to be created
+      include_tasks: ../../roles/cms/tasks/prepare_new_dbname.yml
+      when: task_type == 'copy_db'
+
+    - name: Creating database
+      include_tasks: ../../roles/cms/tasks/create_database.yml
+      when: task_type == 'copy_db'
+
+    - name: Importing database
+      include_tasks: ../../roles/cms/tasks/import_database.yml
+      when: task_type == 'copy_db'
+
+    - name: Granting database access
+      include_tasks: ../../roles/cms/tasks/grant_access.yml
+      when: task_type == 'copy_db' and dest_env != 'none'
+
+    - name: Checking if the db name is assigned for other environments in inventory table
+      include_tasks: ../../roles/cms/tasks/check_db.yml
+      vars:
+        db: "{{ src_db_name }}"
+      when: task_type == 'rollback_db' and drop_old_db == 'Yes'
+
+    - name: Revoking database access
+      include_tasks: ../../roles/cms/tasks/revoke_access.yml
+      vars:
+        db: "{{ src_db_name }}"
+      when: task_type == 'rollback_db' and dest_env == 'none' and drop_old_db == 'Yes' and db_name_exists == '1'
+
+    - name: Droping database
+      include_tasks: ../../roles/cms/tasks/drop_database.yml
+      vars:
+        db: "{{ src_db_name }}"
+      when: dest_env == 'none' and drop_old_db == 'Yes' and db_name_exists is defined and db_name_exists == '1'
+
+    - name: Updating Active DB name in Inventory Table
+      include_tasks: ../../roles/cms/tasks/update_db_inventory.yml
+      vars:
+        update_name: "Updating Active DB name in Inventory Table"
+        db: "{{ new_db }}"
+        active: "{{ dest_env_num }}"
+      when: task_type == 'copy_db' and dest_env != 'none'
+
+    - name: Moving Database between environments
+      include_tasks: ../../roles/cms/tasks/update_db_inventory.yml
+      vars:
+        update_name: "Moving Database from Internal to Frontfacing"
+        db: "{{ src_db_name }}"
+        active: "{{ dest_env_num }}"
+      when: task_type == 'move_db' and dest_env != 'none'
+
+    - name: Checking if the db name is assigned for other environments in inventory table
+      include_tasks: ../../roles/cms/tasks/check_db.yml
+      vars:
+        db: "{{ dest_old_db_name }}"
+      when: dest_env != 'none' and task_type != 'backup_db' and task_type != 'rollback_db' and drop_old_db == 'Yes'
+
+    - name: Revoking database access
+      include_tasks: ../../roles/cms/tasks/revoke_access.yml
+      vars:
+        db: "{{ dest_old_db_name }}"
+      when: dest_env != 'none' and task_type != 'backup_db' and task_type != 'rollback_db' and drop_old_db == 'Yes' and db_name_exists == '1'
+
+    - name: Droping database
+      include_tasks: ../../roles/cms/tasks/drop_database.yml
+      vars:
+        db: "{{ dest_old_db_name }}"
+      when: dest_env != 'none' and task_type != 'backup_db' and task_type != 'rollback_db' and drop_old_db == 'Yes' and db_name_exists == '1'
+
+    - name: Updating Active DB name in Inventory Table
+      include_tasks: ../../roles/cms/tasks/update_db_inventory.yml
+      vars:
+        update_name: "Rolling the database to previous one"
+        db: "{{ src_old_db_name }}"
+        active: "{{ src_env_num }}"
+      when: dest_env == 'none' and task_type == 'rollback_db'
+
+    - name: Set empty for next rollback database
+      include_tasks: ../../roles/cms/tasks/update_db_inventory.yml
+      vars:
+        update_name: "Set empty for next rollback database"
+        db: ""
+        active: "{{ src_env_num | int + 2 }}"
+      when: dest_env == 'none' and task_type == 'rollback_db'
+
+    - name: Updating Rollback DB name in Inventory Table
+      include_tasks: ../../roles/cms/tasks/update_db_inventory.yml
+      vars:
+        update_name: "Updating Rollback DB name in Inventory Table"
+        db: "{{ dest_db_name }}"
+        active: "{{ dest_env_num | int + 2 }}"
+      when: dest_env != 'none' and (task_type == 'copy_db' or task_type == 'move_db')
+
+    - name: Get current front facing database name from inventory
+      include_tasks: ../../roles/cms/tasks/get_ff_database_name.yml
+
+    - name: Get current internal facing database name from inventory
+      include_tasks: ../../roles/cms/tasks/get_if_database_name.yml
+
+    - name: Sending Email Notification
+      include_tasks: ../../roles/cms/tasks/db_automation_notification.yml
