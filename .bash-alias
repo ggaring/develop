@@ -1,0 +1,36 @@
+alias ag='grep -Rl'
+alias gc='git checkout'
+alias gs='git status'
+alias ga='git add'
+alias gct='git commit -m'
+alias gd='git diff'
+alias gpom='git pull origin master'
+alias gPo='git pull origin'
+alias c='clear'
+alias gpo='git push origin'
+alias gcm='git checkout master'
+alias gdm='git diff master --name-only'
+alias ag='grep -Rl'
+alias gc='git checkout'
+alias gs='git status'
+alias ga='git add'
+alias gct='git commit -m'
+alias gd='git diff'
+alias gpom='git pull origin master'
+alias gPo='git pull origin'
+alias c='clear'
+alias gcm='git checkout master'
+alias gpo='git push origin'
+alias gdm='git diff master --name-only'
+alias gb='git branch'
+alias gcC='git checkout cashier_ignore'
+alias gcE='git checkout entrypage'
+alias gcS='git checkout sportsbook'
+alias gcG='git checkout gts'
+
+
+# Git branch in prompt.
+parse_git_branch() {
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+export PS1="\u@\h \W\[\033[32m\]\$(parse_git_branch)\[\033[00m\] $ "
