@@ -1,0 +1,4 @@
+curl -u ggaring:Emcee_04 -X POST -H 'Content-Type: application/json' -d'{"type":"page","title":"new page",
+"ancestors":[{"id":17137829}], "space":{"key":"Release Delivery Team Space"},"body":{"storage":{"value":
+"<p>This is a new page</p>","representation":"storage"}}}'
+http://confluence-poc.ph.esl-asia.com/confluence/rest/api/content/ | python -mjson.tool
