@@ -1,0 +1,92 @@
+---
+- hosts: "{{ project }}"
+  become: true
+  gather_facts: true
+  roles:
+    - { role: 'core-configuration' }
+  tasks:
+    - block:
+        - name: Ensure {{ apache_process }} service is running
+          include_tasks: ../../roles/cms/tasks/start_service.yml
+
+        - name: Send API calls (intial deployment)
+          include_tasks: ../../roles/cms/tasks/initial_ems_integration.yml
+          when: env == 'production'
+
+        - name: Get deployment timestamp
+          include_tasks: ../../roles/cms/tasks/get_timestamp.yml
+
+        - name: Get release package
+          include_tasks: ../../roles/cms/tasks/get_release_package_from_artifactory.yml
+
+        - name: Update database configuration (where needed)
+          include_tasks: ../../roles/cms/tasks/copy_database.yml
+          when: inventory_hostname in groups['drupal-data']
+
+        - name: Update sites configuration (where needed)
+          include_tasks: ../../roles/cms/tasks/create_sites_php.yml
+          when: inventory_hostname in groups['drupal-data']
+
+        - name: Update settings.php file
+          include_tasks: ../../roles/cms/tasks/copy_settings.yml
+          when: inventory_hostname in groups['apache']
+
+      # redis configuration is managed by nginx
+      # nginx needs to be reconfigured if we have changes in redis
+      # servers/ports
+
+        - name: Create symlinks to nfs directories (where needed)
+          include_tasks: ../../roles/cms/tasks/create_nfs_symlinks.yml
+
+        - name: Create log directory if not existing
+          include_tasks: ../../roles/cms/tasks/create_log_directory.yml
+
+      # now the release is on the final hosts, we need to update some conetents
+      # before we can say the release is live
+        - name: Fix release permissions on target hosts
+          include_tasks: ../../roles/cms/tasks/update_permissions.yml
+
+        - name: Ensure directories are 0750 and files are 0640 for docroots
+          include_tasks: ../../roles/cms/tasks/update_permissions_for_docroots.yml
+
+        - name: Restore selinux context
+          include_tasks: ../../roles/cms/tasks/restore_selinux_context.yml
+
+        - name: Swap the symlink, we're live
+          include_tasks: ../../roles/cms/tasks/create_symlink.yml
+
+        - name: Ensure php-fpm is reloaded
+          service:
+            name: php-fpm
+            state: reloaded
+          when: inventory_hostname in groups['nginx']
+
+        - name: Ensure nginx is reloaded
+          service:
+            name: nginx
+            state: reloaded
+          when: inventory_hostname in groups['nginx']
+
+      # now the deployment is complete
+      # POST deployment tasks
+        - name: Tag the artifact
+          include_tasks: ../../roles/cms/tasks/tag_artifact.yml
+
+        - name: Remove old deployment directories (post deployment)
+          include_tasks: ../../roles/cms/tasks/remove_old_deployments.yml
+
+        - name: Notify via mail (post deployment)
+          include_tasks: ../../roles/cms/tasks/sendmail.yml
+
+        - name: Send API calls (success deployment)
+          include_tasks: ../../roles/cms/tasks/success_ems_integration.yml
+          when: env == 'production'
+
+        - name: Send deployment record to new relic
+          include_tasks: ../../roles/cms/tasks/new_relic_deploy_record.yml
+          when: env == 'staging' or env == 'production'
+
+      rescue:
+        - name: Send API calls (fail deployment)
+          include_tasks: ../../roles/cms/tasks/fail_ems_integration.yml
+          when: env == 'production'

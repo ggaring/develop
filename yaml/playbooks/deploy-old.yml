@@ -1,0 +1,44 @@
+---
+- hosts: "{{ project }}"
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Install Extra RPMs
+      include_tasks: ../../roles/cms/tasks/extra_rpms.yml
+
+    - name: Get deployment timestamp
+      include_tasks: ../../roles/cms/tasks/get_timestamp.yml
+
+    - name: Get release package
+      include_tasks: ../../roles/cms/tasks/get_release_package_from_svn.yml
+
+      # this is terrible but evey other soultion stinks too
+    - name: Push configuration to final hosts
+      include_tasks: ../../roles/cms/tasks/copy_configuration_fish-hunter-central_registration.yml
+      when: project == 'fish-hunter-central-registration'
+
+    - name: Restore permssions to new deployment
+      include_tasks: ../../roles/cms/tasks/permissions.yml
+
+    - name: Ensure directories are 0750 and files are 0640 for docroots
+      include_tasks: ../../roles/cms/tasks/update_permissions_for_docroots.yml
+
+    - name: Fix permissions on .htaccess
+      include_tasks: ../../roles/cms/tasks/update_htaccess_permissions.yml
+
+    - name: Update ACLs on the deployment folder
+      include_tasks: ../../roles/cms/tasks/htdocsdir_acl.yml
+
+    - name: Setup vhosts for product
+      include_tasks: ../../roles/cms/tasks/{{ project }}.yml
+
+    - name: Swap the symlink, we're live
+      include_tasks: ../../roles/cms/tasks/create_symlink.yml
+
+    # now the deployment is complete
+    # POST deployment tasks
+    - name: Remove old deployment directories (post deployment)
+      include_tasks: ../../roles/cms/tasks/remove_old_deployments.yml
+
+    - name: Notify via mail (post deployment)
+      include_tasks: ../../roles/cms/tasks/sendmail.yml
