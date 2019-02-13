@@ -1,0 +1,12 @@
+# owner: release
+
+# this is to post url calls
+- name: Send api calls to EMS
+  uri:
+    url: "{{ ems_api_url }}"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    body_format: json
+    body: "{{ lookup('template', '../../../roles/cms/templates/success_ems.json.j2') }}"
+    return_content: yes
