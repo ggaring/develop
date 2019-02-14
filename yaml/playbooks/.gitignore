@@ -1,0 +1,38 @@
+/vendor/
+/core/
+/logs/*
+/cache/*
+!/cache/.gitkeep
+!/logs/.gitkeep
+node_modules/
+
+# Ignore generated assets
+/web/images
+/web/css
+/web/js
+manifest.json
+
+# files created by the build process
+*.pyc
+*.tar.gz
+automation/deployed/*.jsonl
+deploy/*
+
+# sonarlint folder
+/.sonarlint/
+
+/final_package/
+pipeline.log
+/.scannerwork/
+/coverage/
+/jmeter
+jmeter.log
+*.csv
+load_tests_results
+load_tests_results_logs
+
+# package cache
+.node-cache
+.bower-cache
+.composer-cache
+.yarn-cache
