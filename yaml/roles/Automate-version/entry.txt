@@ -1,0 +1,7 @@
+RAW HTML
+<table class="wrapped" style="letter-spacing: 0.0px;" border="1"><colgroup><col /><col /></colgroup><tbody><tr><th>products</th><td><table class="wrapped" border="1"><tbody><tr><th>Account</th><td><table class="wrapped" border="1"><tbody><tr><th>latest version</th><td>releasev1.3.2XC</td></tr></tbody></table></td></tr><tr><th>Sports</th><td><table class="wrapped" border="1"><tbody><tr><th>latest version</th><td>1</td></tr></tbody></table></td></tr><tr><th>Games</th><td><table class="wrapped" border="1"><tbody><tr><th>latest version</th><td>3</td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table>
+
+
+JSON
+"<table class=\"wrapped\" style=\"letter-spacing: 0.0px;\" border=\"1\"><colgroup><col /><col /></colgroup><tbody><tr><th>products</th><td><table class=\"wrapped\" border=\"1\"><tbody><tr><th>Account</th><td><table class=\"wrapped\" border=\"1\"><tbody><tr><th>latest version</th><td>releasev1.3.2XC</td></tr></tbody></table></td></tr><tr><th>Sports</th><td><table class=\"wrapped\" border=\"1\"><tbody><tr><th>latest version</th><td>1</td></tr></tbody></table></td></tr><tr><th>Games</th><td><table class=\"wrapped\" border=\"1\"><tbody><tr><th>latest version</th><td>3</td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table>"
+

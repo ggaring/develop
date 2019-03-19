@@ -1,0 +1,37 @@
+2019-03-18 16:59:19,308 - confluence page automation - INFO - Running the script now
+2019-03-18 16:59:19,310 - confluence page automation - INFO - Checking if Acct is included on the vaild products list
+2019-03-18 16:59:19,310 - confluence page automation - INFO - Acct is an invalid project name
+2019-03-18 16:59:58,493 - confluence page automation - INFO - Running the script now
+2019-03-18 16:59:58,496 - confluence page automation - INFO - Checking if Acct is included on the valid products
+2019-03-18 16:59:58,497 - confluence page automation - INFO - Acct is an invalid project name
+2019-03-18 17:00:13,011 - confluence page automation - INFO - Running the script now
+2019-03-18 17:00:13,013 - confluence page automation - INFO - Checking if Cashier is included on the valid products
+2019-03-18 17:00:13,014 - confluence page automation - INFO - Cashier is an invalid project name
+2019-03-18 17:05:03,127 - confluence automation - INFO - Running the script now
+2019-03-18 17:05:03,130 - confluence automation - INFO - Checking if Cashier is included on the valid products
+2019-03-18 17:05:03,130 - confluence automation - ERROR - Cashier is an invalid project name
+2019-03-18 18:04:43,007 - confluence automation - INFO - Running the script now
+2019-03-18 18:04:43,022 - confluence automation - INFO - Checking if Account is included on the valid products
+2019-03-18 18:04:43,023 - confluence automation - INFO - Account is a valid product
+2019-03-18 18:04:43,279 - confluence automation - INFO - Confluence page now updated!
+2019-03-18 18:22:21,739 - confluence automation - INFO - Running the script now
+2019-03-18 18:22:21,757 - confluence automation - INFO - Checking if Account is included on the valid products
+2019-03-18 18:22:21,758 - confluence automation - INFO - Account is a valid product
+2019-03-18 18:26:38,045 - confluence automation - INFO - Running the script now
+2019-03-18 18:26:38,065 - confluence automation - INFO - Checking if Account is included on the valid products
+2019-03-18 18:26:38,065 - confluence automation - INFO - Account is a valid product
+2019-03-18 18:27:01,507 - confluence automation - INFO - Running the script now
+2019-03-18 18:27:01,509 - confluence automation - INFO - Checking if Account is included on the valid products
+2019-03-18 18:27:01,509 - confluence automation - INFO - Account is a valid product
+2019-03-18 18:27:01,745 - confluence automation - INFO - Confluence page now updated!
+2019-03-18 18:28:48,649 - confluence automation - INFO - Running the script now
+2019-03-18 18:28:48,669 - confluence automation - INFO - Checking if Account is included on the valid products
+2019-03-18 18:28:48,669 - confluence automation - INFO - Account is a valid product
+2019-03-18 18:28:48,879 - confluence automation - INFO - Confluence page now updated!
+2019-03-19 11:46:39,415 - confluence automation - INFO - Running the script now
+2019-03-19 11:46:39,438 - confluence automation - INFO - Checking if Account is included on the valid products
+2019-03-19 11:46:39,438 - confluence automation - ERROR - Account is an invalid project name
+2019-03-19 11:46:54,266 - confluence automation - INFO - Running the script now
+2019-03-19 11:46:54,298 - confluence automation - INFO - Checking if account is included on the valid products
+2019-03-19 11:46:54,298 - confluence automation - INFO - account is a valid product
+2019-03-19 11:46:55,641 - confluence automation - INFO - Confluence page now updated!
